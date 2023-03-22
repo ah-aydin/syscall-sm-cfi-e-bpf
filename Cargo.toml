@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "collect-syscall-data",
+    "syscall-sm-cfi-e-bpf",
+    "syscall-sm-cfi-e-bpf-common",
+    "syscalls",
+    "xtask"
+]
