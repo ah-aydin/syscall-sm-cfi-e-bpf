@@ -33,7 +33,7 @@ impl State {
     pub fn add_tracepoint(&mut self, tracepoint: String) {
         if tracepoint.contains("enter") {
             self.entry_tracepoints.push(tracepoint.clone());
-        } else {
+        } else if tracepoint.contains("exit") {
             self.exit_tracepoints.push(tracepoint.clone());
         }
     }
