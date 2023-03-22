@@ -1,9 +1,10 @@
-//#![feature(const_trait_impl)]
-#[macro_use]
 mod state;
 
 use std::{
-    fs::File,
+    fs::{
+        File,
+        read_dir
+    },
     io::Read,
     str::from_utf8,
 };
@@ -36,6 +37,16 @@ pub fn init(unistd_file_path: &str) {
 
         unsafe { GLOBAL_STATE.as_mut().unwrap().add_syscall(String::from(syscall_name), syscall_id) };
     }
+    
+    // Get list of kernel tracepoints for the eBPF program
+    let tracepoint_dirs = read_dir("/sys/kernel/debug/tracing/events/syscalls").unwrap();
+    for dir in tracepoint_dirs {
+        let entry = dir.unwrap();
+        if entry.file_type().unwrap().is_dir() {
+            info!("Found tracepoint: {}", entry.file_name().to_string_lossy());
+            unsafe { GLOBAL_STATE.as_mut().unwrap().add_tracepoint(String::from(entry.file_name().to_string_lossy())) };
+        }
+    }
 }
 
 pub fn get_syscall_id(syscall_name: String) -> Option<u16> {
@@ -44,4 +55,12 @@ pub fn get_syscall_id(syscall_name: String) -> Option<u16> {
 
 pub fn get_syscall_name(syscall_id: u16) -> Option<String> {
     unsafe { GLOBAL_STATE.as_ref().unwrap().get_syscall_name(syscall_id) }
+}
+
+pub fn get_entry_tracepoints() -> &'static Vec<String> {
+    unsafe { GLOBAL_STATE.as_ref().unwrap().get_entry_tracepoint_ref() }
+}
+
+pub fn get_exit_tracepoints() -> &'static Vec<String> {
+    unsafe { GLOBAL_STATE.as_ref().unwrap().get_exit_tracepoint_ref() }
 }

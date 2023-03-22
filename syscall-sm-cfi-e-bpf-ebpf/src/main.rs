@@ -5,9 +5,7 @@ use aya_bpf::{
     macros::tracepoint,
     programs::TracePointContext,
     cty::c_long,
-    helpers::{
-        bpf_get_current_comm
-    },
+    helpers::bpf_get_current_comm,
 };
 use aya_log_ebpf::info;
 
