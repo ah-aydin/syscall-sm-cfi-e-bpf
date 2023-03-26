@@ -5,11 +5,13 @@ use aya_bpf::{
     macros::tracepoint,
     programs::TracePointContext,
     cty::c_long,
-    helpers::bpf_get_current_comm,
+    helpers::bpf_get_current_comm
 };
 use aya_log_ebpf::info;
 
 use core::str::from_utf8_unchecked;
+
+// TODO create maps for binary names, transitions, and last syscall
 
 const SYSCALL_NR_OFFSET: usize = 8;
 

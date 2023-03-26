@@ -22,6 +22,10 @@ async fn main() -> Result<(), anyhow::Error> {
         warn!("failed to initialize eBPF logger: {}", e);
     }
 
+    // TODO load eBPF maps
+    // Populate binary names
+    // Populate binary transitions
+
     let program: &mut TracePoint = bpf.program_mut("tracepoint_program").unwrap().try_into()?;
     program.load()?;
     program.attach("syscalls", "sys_enter_read")?;
