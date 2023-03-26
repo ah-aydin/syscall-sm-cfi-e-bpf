@@ -1,4 +1,5 @@
 mod state;
+pub mod state_machine_data;
 
 use std::{
     fs::{
@@ -13,14 +14,16 @@ use state::State;
 
 static mut GLOBAL_STATE: Option<State> = None;
 
+// Change this to the SRC dir of unistd.h file that coresponds the the machines architecture
+const UNISTD_SRC_DIR: &str = "/usr/include/x86_64-linux-gnu/asm/unistd_64.h";
 const STD_PREFIX: &str = "#define __NR_";
 
-pub fn init(unistd_file_path: &str) {
+pub fn init() {
 
     unsafe { GLOBAL_STATE = Some(State::new()) };
 
     // Get data from unist file
-    let mut unistd_src_file = File::open(unistd_file_path).unwrap();
+    let mut unistd_src_file = File::open(UNISTD_SRC_DIR).unwrap();
     let mut unistd_src_buffer = Vec::new();
     unistd_src_file.read_to_end(&mut unistd_src_buffer).unwrap();
 
@@ -47,6 +50,9 @@ pub fn init(unistd_file_path: &str) {
             unsafe { GLOBAL_STATE.as_mut().unwrap().add_tracepoint(String::from(entry.file_name().to_string_lossy())) };
         }
     }
+
+    info!("Found {} syscalls", unsafe {GLOBAL_STATE.as_ref().unwrap().get_syscall_count() });
+    info!("Found {} tracepoints", unsafe {GLOBAL_STATE.as_ref().unwrap().get_tracepoint_count() });
 }
 
 pub fn get_syscall_id(syscall_name: String) -> Option<u16> {
@@ -63,4 +69,12 @@ pub fn get_entry_tracepoints() -> &'static Vec<String> {
 
 pub fn get_exit_tracepoints() -> &'static Vec<String> {
     unsafe { GLOBAL_STATE.as_ref().unwrap().get_exit_tracepoint_ref() }
+}
+
+pub fn is_syscall(syscall: String) -> bool {
+    unsafe { GLOBAL_STATE.as_ref().unwrap().is_syscall(syscall) }
+}
+
+pub fn syscall_has_tracepoint(syscall: String) -> bool {
+    unsafe { GLOBAL_STATE.as_ref().unwrap().syscall_has_tracepoint(syscall) }
 }

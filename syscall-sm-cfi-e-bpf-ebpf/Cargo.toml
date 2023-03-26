@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 aya-bpf = { git = "https://github.com/aya-rs/aya", branch = "main" }
 aya-log-ebpf = { git = "https://github.com/aya-rs/aya", branch = "main" }
-syscall-sm-cfi-e-bpf-common = { path = "../syscall-sm-cfi-e-bpf-common" }
+syscall-sm-cfi-e-bpf-common = { path = "../syscall-sm-cfi-e-bpf-common", as="syscall_smi_cfi_common" }
 
 [[bin]]
 name = "syscall-sm-cfi-e-bpf"
