@@ -24,11 +24,12 @@ async fn main() -> Result<(), anyhow::Error> {
 
     // TODO load eBPF maps
     // Populate binary names
-    // Populate binary transitions
+    // Populate syscall transitions
+    // Attach the eBPF program to all the sys_enter_* tracepoints
 
     let program: &mut TracePoint = bpf.program_mut("tracepoint_program").unwrap().try_into()?;
     program.load()?;
-    program.attach("syscalls", "sys_enter_read")?;
+    program.attach("syscalls", "sys_enter_brk")?;
 
     info!("Waiting for Ctrl-C...");
     signal::ctrl_c().await?;
