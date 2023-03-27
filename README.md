@@ -1,5 +1,9 @@
 # syscall-sm-cfi-e-bpf
 
+# Important
+
+I kindof screwed up the repository. New repo is [here](https://github.com/ah-aydin/syscall-sm-cfi)
+
 This is a proof of concept eBPF program for runtime security. It tracks, the syscall state machine with a max depth of 2. Extraction of the syscall state machine of a binary file is done by running `strace` and putting the
 output of the file inside the `res` folder with `.syscall` extention and running the subproject `syscall-extractor`.
 
