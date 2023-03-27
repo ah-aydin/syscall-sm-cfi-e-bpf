@@ -7,12 +7,10 @@ use tokio::signal;
 use syscall_sm_cfi_e_bpf_common::{
     str_to_1,
     str_to_16,
-    str_to_20,
     build_transition,
 };
 use std::fs;
 use std::io::Read;
-use serde::{Serialize, Deserialize};
 use serde_json::{Map, Value};
 
 #[tokio::main]
@@ -36,6 +34,7 @@ async fn main() -> Result<(), anyhow::Error> {
     let mut tracked_binaries: HashMap<_, [u8; 16], [u8; 1]> = HashMap::try_from(bpf.map_mut("SYS_SM_TRACKED_BINARIES")?)?;
     let mut transitions: HashMap<_, [u8; 20], [u8; 1]> = HashMap::try_from(bpf.map_mut("SYS_SM_TRANSITIONS")?)?;
 
+    // Populate eBPF maps
     let entries = fs::read_dir(syscalls::RES_DIR).unwrap();
     for entry in entries {
         match entry {

@@ -16,11 +16,7 @@ use aya_bpf::{
 };
 use aya_log_ebpf::info;
 use core::str::from_utf8_unchecked;
-use syscall_sm_cfi_e_bpf_common::{
-    str_to_16,
-    str_to_20,
-    build_transition,
-};
+use syscall_sm_cfi_e_bpf_common::build_transition;
 
 const SYSCALL_NR_OFFSET: usize = 8;
 const SIGTERM: u32 = 15;

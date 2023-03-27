@@ -22,17 +22,6 @@ pub fn str_to_16(s: &str) -> [u8; 16] {
     result
 }
 
-pub fn str_to_20(s: &str) -> [u8; 20] {
-    let mut result = [0; 20];
-    let bytes = s.as_bytes();
-    let len = bytes.len();
-    if len > 20 {
-        panic!("String is too long");
-    }
-    result[..len].copy_from_slice(bytes);
-    result
-}
-
 pub fn build_transition(bin_name: &str, from: u16, to: u16) -> [u8; 20] {
     let mut result = [0; 20];
 
