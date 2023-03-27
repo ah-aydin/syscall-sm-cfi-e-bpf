@@ -17,7 +17,6 @@ use aya_bpf::{
 use aya_log_ebpf::info;
 use core::str::from_utf8_unchecked;
 use syscall_sm_cfi_e_bpf_common::{
-    str_to_1,
     str_to_16,
     str_to_20,
     build_transition,
@@ -45,17 +44,24 @@ pub fn tracepoint_program(ctx: TracePointContext) -> c_long {
 
 fn try_tracepoint_program(ctx: TracePointContext) -> Result<c_long, c_long> {
     let syscall_nr: u32 = unsafe { ctx.read_at(SYSCALL_NR_OFFSET)? };
-    let bin_bytes:[u8; 16] = bpf_get_current_comm()?;
+    let bin_bytes: [u8; 16] = bpf_get_current_comm()?;
     let bin_name = unsafe { from_utf8_unchecked(&bin_bytes) };
 
-    if unsafe { SYS_SM_TRACKED_BINARIES.get(&str_to_16(bin_name)).is_none() } {
+    // Check if binary is tracked
+    if unsafe { SYS_SM_TRACKED_BINARIES.get(&bin_bytes).is_none() } {
+        return Ok(0);
+    }
+
+    // Check if first syscall
+    if unsafe { SYS_SM_LAST_SYSCALL.get(&bin_bytes).is_none() } {
+        unsafe { SYS_SM_LAST_SYSCALL.insert(&bin_bytes, &(syscall_nr as u16), 0).unwrap() };
         return Ok(0);
     }
     
+    // TODO check for SM transitions
     let transition = build_transition(bin_name, syscall_nr as u16, syscall_nr as u16);
-    unsafe { info!(&ctx, "TERMINATED: syscall is entered {} bin_name: {} | {}", syscall_nr, bin_name, from_utf8_unchecked(&transition)) } ;
+    info!(&ctx, "TERMINATED: syscall is entered {} bin_name: {}", syscall_nr, bin_name);
     unsafe { bpf_send_signal_thread(SIGTERM) };
-
     Ok(0)
 }
 

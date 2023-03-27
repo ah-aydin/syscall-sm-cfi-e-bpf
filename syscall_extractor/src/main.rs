@@ -7,9 +7,6 @@ use std::{
 };
 use log::{info, error};
 
-const RES_DIR: &str = "/home/hamza/Dev/syscall-sm-cfi-e-bpf/res/";
-const DEBUG_STR: &str = "============================================================";
-
 fn process_file(file_path: PathBuf) {
     let binary_name = file_path.file_stem().unwrap().to_str().unwrap().clone();
     info!("Processing for binary: {}", binary_name);
@@ -60,7 +57,7 @@ fn main() {
     env_logger::init();
     syscalls::init();
 
-    let entries = fs::read_dir(RES_DIR).unwrap();
+    let entries = fs::read_dir(syscalls::RES_DIR).unwrap();
     
     for entry in entries {
         match entry {
@@ -68,10 +65,10 @@ fn main() {
                 if entry.path().extension().unwrap() != "syscall" {
                     continue;
                 }
-                info!("{}", DEBUG_STR);
+                info!("{}", syscalls::DEBUG_STR);
                 info!("Found syscall file {}", entry.file_name().into_string().unwrap());
                 process_file(entry.path());
-                info!("{}", DEBUG_STR);
+                info!("{}", syscalls::DEBUG_STR);
             }
             Err(_) => {}
         };

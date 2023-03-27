@@ -12,6 +12,9 @@ use std::{
 use log::info;
 use state::State;
 
+pub const RES_DIR: &str = "/home/hamza/Dev/syscall-sm-cfi-e-bpf/res/";
+pub const DEBUG_STR: &str = "============================================================";
+
 static mut GLOBAL_STATE: Option<State> = None;
 
 // Change this to the SRC dir of unistd.h file that coresponds the the machines architecture
